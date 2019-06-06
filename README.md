@@ -1,17 +1,13 @@
 # Getting Started
 
 ## Set up docker containers
-1) Move into the project directory `cd [project_dir]/app`
+1) Create the docker containers `docker-compose up -d`
 
-2) Run a temporary container to set up the php project `docker run --rm -v $(pwd) composer install`
+2) Check that the containers are running and up `docker ps`
 
-3) Move back up to the project directory `cd ..`
+3) Install the dependencies for the php project `docker-compose exec app composer install`
 
-4) Create the docker containers `docker-compose up -d`
-
-5) Check that the containers are running and up `docker ps`
-
-6) Duplicate the [project_dir]/app/.env.example file as .env
+4) Duplicate the [project_dir]/app/.env.example file as .env
 
 7) Set the database configuration
 
