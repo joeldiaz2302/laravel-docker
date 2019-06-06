@@ -3,7 +3,7 @@
 ## Set up docker containers
 1) Move into the project directory `cd [project_dir]/app`
 
-2) Run a temporary container to set up the php project `docker run --rm -v $(pwd):/app composer install`
+2) Run a temporary container to set up the php project `docker run --rm -v $(pwd) composer install`
 
 3) Move back up to the project directory `cd ..`
 
@@ -68,5 +68,3 @@ GRANT ALL ON laravel.* TO 'laraveluser'@'%' IDENTIFIED BY 'your_laravel_db_passw
 ## Run the migrations
 1) `docker-compose exec app php artisan migrate`
 
-## Finish Up
-After this is done you can use 
