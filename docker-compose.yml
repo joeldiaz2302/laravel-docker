@@ -48,15 +48,17 @@ services:
     tty: true
     ports:
       - "3306:3306"
+    command: --init-file /data/application/init.sql
     environment:
       MYSQL_DATABASE: laravel
-      MYSQL_ROOT_PASSWORD: xJHtxj8G
+      MYSQL_ROOT_PASSWORD: MYSQL_ROOT_PASSWORD_VALUE
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     volumes:
       - mysql-data:/var/lib/mysql/
       - ./log/mysql:/var/log
       - ./mysql/my.cnf:/etc/mysql/my.cnf
+      - ./mysql/setup.sql:/data/application/init.sql
     networks:
       - laravel-network
 
