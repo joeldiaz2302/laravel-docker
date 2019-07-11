@@ -1,8 +1,9 @@
 #!/bin/bash
 
-cp docker-compose.yml.template docker-compose.yml
-ex -s +%s/DOCKER_ROOT/.\\//ge -cwq docker-compose.yml
 if [ $# -gt 1 ]; then
+	echo generating docker compose file
+	cp docker-compose.yml.template docker-compose.yml
+	ex -s +%s/DOCKER_ROOT/.\\//ge -cwq docker-compose.yml
 	echo setting password values
 	ex -s +%s/MYSQL_ROOT_PASSWORD_VALUE/$1/ge -cwq docker-compose.yml
 	ex -s +%s/LARAVEL_USER_PASSWORD/$2/ge -cwq mysql/setup.sql
