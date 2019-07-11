@@ -1,6 +1,8 @@
 #!/bin/bash
 
-if [ $# -gt 0 ]; then
+cp docker-compose.yml.template docker-compose.yml
+ex -s +%s/DOCKER_ROOT/.\\//ge -cwq docker-compose.yml
+if [ $# -gt 1 ]; then
 	echo setting password values
 	ex -s +%s/MYSQL_ROOT_PASSWORD_VALUE/$1/ge -cwq docker-compose.yml
 	ex -s +%s/LARAVEL_USER_PASSWORD/$2/ge -cwq mysql/setup.sql
@@ -51,7 +53,7 @@ if [ $# -gt 0 ]; then
 	echo docker exec app php artisan db:seed
 	docker exec app php artisan db:seed
 
-	echo unsetting password values
+	echo unsetting configuration values
 	ex -s +%s/$1/MYSQL_ROOT_PASSWORD_VALUE/ge -cwq docker-compose.yml
 	ex -s +%s/$2/LARAVEL_USER_PASSWORD/ge -cwq mysql/setup.sql
 	echo setup complete

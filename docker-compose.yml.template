@@ -4,7 +4,7 @@ services:
   #PHP Service
   app:
     build:
-      context: ./
+      context: DOCKER_ROOT
       dockerfile: Dockerfile
     image: digitalocean.com/php
     container_name: app
@@ -15,9 +15,9 @@ services:
       SERVICE_TAGS: dev
     working_dir: /var/www
     volumes:
-      - ./app:/var/www
-      - ./log/php:/var/log
-      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - DOCKER_ROOTapp:/var/www
+      - DOCKER_ROOTlog/php:/var/log
+      - DOCKER_ROOTphp/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - laravel-network
 
@@ -33,9 +33,9 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./app:/var/www
-      - ./log/nginx:/var/log
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - DOCKER_ROOTapp:/var/www
+      - DOCKER_ROOTlog/nginx:/var/log
+      - DOCKER_ROOTnginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - laravel-network
 
@@ -56,9 +56,9 @@ services:
       SERVICE_NAME: mysql
     volumes:
       - mysql-data:/var/lib/mysql/
-      - ./log/mysql:/var/log
-      - ./mysql/my.cnf:/etc/mysql/my.cnf
-      - ./mysql/setup.sql:/data/application/init.sql
+      - DOCKER_ROOTlog/mysql:/var/log
+      - DOCKER_ROOTmysql/my.cnf:/etc/mysql/my.cnf
+      - DOCKER_ROOTmysql/setup.sql:/data/application/init.sql
     networks:
       - laravel-network
 
