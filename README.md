@@ -12,7 +12,9 @@ This project structure contains the docker configurations and directory structur
 
 `./setup.sh [MYSQL_ROOT_PASSWORD] [LARAVEL_USER_PASSWORD] [buildstring or ""]`
 
-## Setup (Windows)
+## Setup (Windows 10)
+
+1) With docker for windows you MUST first make the directory of the application and docker project accessible to mount volumes on. 
 
 Coming Soon
 
