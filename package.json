@@ -1,0 +1,19 @@
+{
+  "name": "installer",
+  "version": "1.0.0",
+  "description": "This project structure contains the docker configurations and directory structure for a laravel project. It has an nginx, php and mysql container set up. This project is designed for minimal set up to make it quick and easy to get started.",
+  "main": "setup_config.js",
+  "scripts": {
+    "setupEnvFile": "node -e 'require(\"./setup_config.js\").setupEnvFile()'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/joeldiaz2302/laravel-docker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/joeldiaz2302/laravel-docker#readme",
+  "devDependencies": {
+    "dotenv": "^8.0.0"
+  }
+}

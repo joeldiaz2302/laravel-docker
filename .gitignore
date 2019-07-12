@@ -6,3 +6,4 @@ docker-compose.yml
 .env
 /app
 .DS
+package-lock\.json
