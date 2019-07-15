@@ -1,0 +1,97 @@
+version: '3.5'
+services:
+
+
+  #PHP Service
+  app:
+    env_file:
+      - .env
+    build:
+      context: ${DOCKER_LOCATION}
+      dockerfile: Dockerfile
+    image: digitalocean.com/php
+    container_name: app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ${PROJECT_LOCATION}:/var/www
+      - ${DOCKER_LOCATION}/log/php:/var/log
+      - ${DOCKER_LOCATION}/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - laravel-network
+
+
+
+  #Nginx Service
+  webserver:
+    env_file:
+      - .env
+    image: nginx:latest
+    container_name: webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ${PROJECT_LOCATION}:/var/www
+      - ${DOCKER_LOCATION}/log/nginx:/var/log
+      - ${DOCKER_LOCATION}/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - laravel-network
+
+
+  #MySQL Service
+  db:
+    env_file:
+      - .env
+    image: mysql:5.7
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: laraveluser
+      MYSQL_PASSWORD: ${USER_PASSWORD}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - mysql-data:/var/lib/mysql/
+      - ${DOCKER_LOCATION}/log/mysql.log:/var/log/mysql.log
+      - ${DOCKER_LOCATION}/mysql/my.cnf:/etc/mysql/my.cnf
+      - ${DOCKER_LOCATION}/mysql/setup.sql:/data/application/init.sql
+    networks:
+      - laravel-network
+
+  dbadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: dbadmin
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8080:80"
+    links:
+      - db
+    networks:
+      - laravel-network
+
+
+#Docker Networks
+networks:
+  laravel-network:
+    name: laranet
+    driver: bridge
+
+#Volumes
+volumes:
+  mysql-data:
+    driver: local

@@ -9,7 +9,7 @@ set +o allexport
 echo build a docker instance for text editing script to run
 
 docker pull node:10
-docker run -dit -v $DOCKER_LOCATION:$INSTALL_SRC -v $PROJECT_LOCATION:$INSTALL_PROJ -w /var/source --name nodeinstaller node
+docker run -dit -v $DOCKER_LOCATION:$INSTALL_SRC -v $PROJECT_LOCATION:$INSTALL_PROJ -w $INSTALL_SRC --name nodeinstaller node
 docker exec nodeinstaller npm i
 
 echo docker-compose build
