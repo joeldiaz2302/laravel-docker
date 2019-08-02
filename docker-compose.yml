@@ -43,6 +43,15 @@ services:
     networks:
       - laravel-network
 
+  doxygen:
+    image: hrektts/doxygen
+    container_name: doxygen
+    tty: true
+    working_dir: /var/www
+    volumes:
+      - ${PROJECT_LOCATION}:/var/www
+    networks:
+      - laravel-network
 
   #MySQL Service
   db:
