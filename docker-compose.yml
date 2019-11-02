@@ -25,6 +25,74 @@ services:
       - laravel-network
 
 
+  workers:
+    env_file:
+      - .env
+    build:
+      context: ${DOCKER_LOCATION}
+      dockerfile: Dockerfile
+    image: digitalocean.com/php
+    container_name: workers
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: workers
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ${PROJECT_LOCATION}:/var/www
+      - ${DOCKER_LOCATION}/log/php:/var/log
+      - ${DOCKER_LOCATION}/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - laravel-network
+    command: ["sh", "-c", "php artisan queue:work"]
+
+  websockets:
+    env_file:
+      - .env
+    build:
+      context: ${DOCKER_LOCATION}
+      dockerfile: Dockerfile
+    image: digitalocean.com/php
+    container_name: websockets
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: websockets
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ${PROJECT_LOCATION}:/var/www
+      - ${DOCKER_LOCATION}/log/php:/var/log
+      - ${DOCKER_LOCATION}/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - laravel-network
+    ports:
+      - "6001:6001"
+    expose:
+      - "6001"
+    command: ["sh", "-c", "php artisan websockets:serve --host=0.0.0.0"]
+
+
+  redis:
+    env_file:
+      - .env
+    image: redis:latest
+    build:
+      context: ${DOCKER_LOCATION}
+      dockerfile: redis.Dockerfile
+    container_name: redis
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+      - ${DOCKER_LOCATION}/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    networks:
+      - laravel-network
+
 
   #Nginx Service
   webserver:
@@ -37,15 +105,22 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "6000:6000"
+      - "6900:6900"
     volumes:
       - ${PROJECT_LOCATION}:/var/www
+      - ${DOCKER_LOCATION}/nginx/ssl.crt:/etc/nginx/ssl.crt
+      - ${DOCKER_LOCATION}/nginx/ssl.key:/etc/nginx/ssl.key
       - ${DOCKER_LOCATION}/nginx/conf.d/:/etc/nginx/conf.d/
+      - ${DOCKER_LOCATION}/nginx/logs/access.log:/var/log/nginx/access.log
+      - ${DOCKER_LOCATION}/nginx/logs/access.log:/var/log/nginx/error.log
     networks:
       - laravel-network
 
   doxygen:
     image: hrektts/doxygen
     container_name: doxygen
+    restart: unless-stopped
     tty: true
     working_dir: /var/www
     volumes:
@@ -101,5 +176,7 @@ networks:
 
 #Volumes
 volumes:
+  redis-data:
+    driver: local
   mysql-data:
     driver: local

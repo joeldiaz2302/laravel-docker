@@ -1,3 +1,4 @@
+
 FROM php:7.2-fpm
 
 # Copy composer.lock and composer.json
@@ -9,7 +10,7 @@ WORKDIR /var/www
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
-    mysql-client \
+    mariadb-client \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
