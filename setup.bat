@@ -34,11 +34,11 @@ timeout /t 4
 
 rem if [ "$NEW_PROJECT" == "build" ]; then
 rem 	if [ "$PROJECT_REPO" != "" ]; then
-rem 		echo docker exec app composer create-project --prefer-dist laravel/laravel tempapp --repository-url=$PROJECT_REPO
-rem 		docker exec app composer create-project --prefer-dist laravel/laravel tempapp --repository-url=$PROJECT_REPO
+rem 		echo docker exec app composer create-project --prefer-dist laravel/laravel ../app --repository-url=$PROJECT_REPO
+rem 		docker exec app composer create-project --prefer-dist laravel/laravel ../app --repository-url=$PROJECT_REPO
 rem 	else
-rem 		echo docker exec app composer create-project --prefer-dist laravel/laravel tempapp 
-rem 		docker exec app composer create-project --prefer-dist laravel/laravel tempapp
+rem 		echo docker exec app composer create-project --prefer-dist laravel/laravel ../app 
+rem 		docker exec app composer create-project --prefer-dist laravel/laravel ../app
 rem 	fi
 rem 	echo docker exec app rsync -vua --delete-after tempapp/ .
 rem 	docker exec app rsync -vua --delete-after tempapp/ .

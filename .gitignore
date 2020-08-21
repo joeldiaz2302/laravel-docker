@@ -3,7 +3,7 @@
 /public/storage
 /certs/*
 *log/*
-*/logs/*
+logs/*.log
 */ssl*
 .env
 /app

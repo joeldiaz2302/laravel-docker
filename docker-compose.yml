@@ -17,6 +17,7 @@ services:
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
+      COMPOSER_MEMORY_LIMIT: -1
     working_dir: /var/www
     volumes:
       - ${PROJECT_PATH}:/var/www
@@ -29,9 +30,6 @@ services:
   workers:
     env_file:
       - .env
-    build:
-      context: ${DOCKER_LOCATION}
-      dockerfile: Dockerfile
     image: digitalocean.com/php
     container_name: workers
     depends_on: [app]
@@ -52,9 +50,6 @@ services:
   websockets:
     env_file:
       - .env
-    build:
-      context: ${DOCKER_LOCATION}
-      dockerfile: Dockerfile
     image: digitalocean.com/php
     container_name: websockets
     depends_on: [app]
