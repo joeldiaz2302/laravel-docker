@@ -6,6 +6,10 @@ set -o allexport
 source .env
 set +o allexport
 
+
+echo create certs
+sh ./create_ssl.sh
+
 echo build a docker instance for text editing script to run
 
 docker pull node:10

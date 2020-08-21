@@ -10,6 +10,7 @@ services:
       context: ${DOCKER_LOCATION}
       dockerfile: Dockerfile
     image: digitalocean.com/php
+    depends_on: [webserver]
     container_name: app
     restart: unless-stopped
     tty: true
@@ -18,11 +19,11 @@ services:
       SERVICE_TAGS: dev
     working_dir: /var/www
     volumes:
-      - ${PROJECT_LOCATION}:/var/www
+      - ${PROJECT_PATH}:/var/www
       - ${DOCKER_LOCATION}/log/php:/var/log
       - ${DOCKER_LOCATION}/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
-      - laravel-network
+      - laranet
 
 
   workers:
@@ -33,6 +34,7 @@ services:
       dockerfile: Dockerfile
     image: digitalocean.com/php
     container_name: workers
+    depends_on: [app]
     restart: unless-stopped
     tty: true
     environment:
@@ -40,11 +42,11 @@ services:
       SERVICE_TAGS: dev
     working_dir: /var/www
     volumes:
-      - ${PROJECT_LOCATION}:/var/www
+      - ${PROJECT_PATH}:/var/www
       - ${DOCKER_LOCATION}/log/php:/var/log
       - ${DOCKER_LOCATION}/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
-      - laravel-network
+      - laranet
     command: ["sh", "-c", "php artisan queue:work"]
 
   websockets:
@@ -55,6 +57,7 @@ services:
       dockerfile: Dockerfile
     image: digitalocean.com/php
     container_name: websockets
+    depends_on: [app]
     restart: unless-stopped
     tty: true
     environment:
@@ -62,11 +65,11 @@ services:
       SERVICE_TAGS: dev
     working_dir: /var/www
     volumes:
-      - ${PROJECT_LOCATION}:/var/www
+      - ${PROJECT_PATH}:/var/www
       - ${DOCKER_LOCATION}/log/php:/var/log
       - ${DOCKER_LOCATION}/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
-      - laravel-network
+      - laranet
     ports:
       - "6001:6001"
     expose:
@@ -91,31 +94,32 @@ services:
       - ${DOCKER_LOCATION}/redis/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
     networks:
-      - laravel-network
+      - laranet
 
 
   #Nginx Service
   webserver:
     env_file:
       - .env
-    image: nginx:latest
+    image: nginx:1.18.0
     container_name: webserver
     restart: unless-stopped
     tty: true
+    environment:
+      VIRTUAL_HOST: "*.develop.dev"
     ports:
       - "80:80"
       - "443:443"
       - "6000:6000"
       - "6900:6900"
     volumes:
-      - ${PROJECT_LOCATION}:/var/www
-      - ${DOCKER_LOCATION}/nginx/ssl.crt:/etc/nginx/ssl.crt
-      - ${DOCKER_LOCATION}/nginx/ssl.key:/etc/nginx/ssl.key
+      - ${PROJECT_PATH}:/var/www
+      - ${DOCKER_LOCATION}/certs/:/tmp/certs/
       - ${DOCKER_LOCATION}/nginx/conf.d/:/etc/nginx/conf.d/
-      - ${DOCKER_LOCATION}/nginx/logs/access.log:/var/log/nginx/access.log
-      - ${DOCKER_LOCATION}/nginx/logs/access.log:/var/log/nginx/error.log
+      - ${DOCKER_LOCATION}/log/nginx/access.log:/var/log/nginx/access.log
+      - ${DOCKER_LOCATION}/log/nginx/access.log:/var/log/nginx/error.log
     networks:
-      - laravel-network
+      - laranet
 
   doxygen:
     image: hrektts/doxygen
@@ -124,9 +128,9 @@ services:
     tty: true
     working_dir: /var/www
     volumes:
-      - ${PROJECT_LOCATION}:/var/www
+      - ${PROJECT_PATH}:/var/www
     networks:
-      - laravel-network
+      - laranet
 
   #MySQL Service
   db:
@@ -149,11 +153,11 @@ services:
       SERVICE_NAME: mysql
     volumes:
       - mysql-data:/var/lib/mysql/
-      - ${DOCKER_LOCATION}/log/mysql.log:/var/log/mysql.log
+      - ${DOCKER_LOCATION}/log/mysql/:/var/log/
       - ${DOCKER_LOCATION}/mysql/my.cnf:/etc/mysql/my.cnf
       - ${DOCKER_LOCATION}/mysql/setup.sql:/data/application/init.sql
     networks:
-      - laravel-network
+      - laranet
 
   dbadmin:
     image: phpmyadmin/phpmyadmin
@@ -165,12 +169,12 @@ services:
     links:
       - db
     networks:
-      - laravel-network
+      - laranet
 
 
 #Docker Networks
 networks:
-  laravel-network:
+  laranet:
     name: laranet
     driver: bridge
 

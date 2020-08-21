@@ -1,5 +1,9 @@
 @ECHO off
 
+echo run the script to generate ssl certs first since it will load .env and if its run after this script will block access to it
+echo create certs
+cmd /C create_ssl.bat
+
 echo load the environment variables
 
 setlocal enableextensions enabledelayedexpansion
@@ -14,13 +18,13 @@ echo PROJECT_LOCATION=%PROJECT_LOCATION%
 echo build a docker instance for text editing script to run
 
 docker pull node:10
-echo docker run -dit -v "%DOCKER_LOCATION%":"%INSTALL_SRC%" -v "%PROJECT_LOCATION%":"%INSTALL_PROJ%" -w %INSTALL_SRC% --name nodeinstaller node
-docker run -dit -v "%DOCKER_LOCATION%":"%INSTALL_SRC%" -v "%PROJECT_LOCATION%":"%INSTALL_PROJ%" -w %INSTALL_SRC% --name nodeinstaller node
+echo docker run -dit -v "%DOCKER_LOCATION%":"%INSTALL_SRC%" -v "%PROJECT_LOCATION%/%PROJECT_NAME%":"%INSTALL_PROJ%" -w %INSTALL_SRC% --name nodeinstaller node
+docker run -dit -v "%DOCKER_LOCATION%":"%INSTALL_SRC%" -v "%PROJECT_LOCATION%/%PROJECT_NAME%":"%INSTALL_PROJ%" -w %INSTALL_SRC% --name nodeinstaller node
 docker exec nodeinstaller npm i
 
-echo docker-compose build
-docker-compose build
-echo docker-compose  up -d
+rem echo docker-compose build
+rem docker-compose build
+echo docker-compose  up -d --build
 docker-compose up -d
 echo Waiting a few seconds to let the containers load up.
 timeout /t 4 
